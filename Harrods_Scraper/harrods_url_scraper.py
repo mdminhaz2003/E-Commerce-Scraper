@@ -22,3 +22,5 @@ def product_url_scraper(page_link: str, serial_number: int) -> None:
         driver.switch_to.window(driver.window_handles[serial_number % 2])
         driver.get(page_link)
         driver.implicitly_wait(5)
+
+        html = BeautifulSoup(markup=driver.page_source, features='html.parser')
