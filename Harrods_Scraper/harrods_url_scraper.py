@@ -17,6 +17,7 @@ driver.get(base_url)
 driver.implicitly_wait(time_to_wait=2)
 driver.switch_to.new_window(type_hint='tab')
 
+
 def product_url_scraper(page_link: str, serial_number: int) -> None:
     try:
         driver.switch_to.window(driver.window_handles[serial_number % 2])
@@ -51,4 +52,18 @@ def product_url_scraper(page_link: str, serial_number: int) -> None:
             So let's make it. :)
             '''
             product_url = f'{base_url}{str(product["url"]).replace("/shopping/shopping/", "/shopping")}'
+
+            '''
+            finally, we got our desired product url. Now we need to store this link to a safe place sa that we can use it in future. But we don't want to 
+            store duplicate data to our database. That's why, we have to check that this url is already exist or not. 
+            if this link is already exist, we have to pass otherwise we have to store in our database called as (harrods_product_url.json)
+            '''
+            if not db.contains(query.url == product_url):
+                db.insert({"url": product_url})
+                print(product_url)
+            else:
+                pass
+
+    except Exception as unknown_exception:
+        print(unknown_exception)
 
