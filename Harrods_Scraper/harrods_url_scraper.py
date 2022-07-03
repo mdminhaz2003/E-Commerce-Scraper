@@ -50,7 +50,7 @@ def product_url_scraper(page_link: str, serial_number: int) -> None:
             because in this link have double (/shopping/shopping) part and we need to convert it to single (/shopping) then it will work perfectly.
             So let's make it. :)
             '''
-            product_url = f'{base_url}{str(product["url"]).replace("/shopping/shopping/", "/shopping")}'
+            product_url = f'{base_url}{str(product["url"]).replace("/shopping/shopping", "/shopping")}'
 
             '''
             finally, we got our desired product url. Now we need to store this link to a safe place sa that we can use it in future. But we don't want to 
