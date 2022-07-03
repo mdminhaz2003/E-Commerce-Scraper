@@ -1,4 +1,3 @@
-import time
 import json
 from tinydb import TinyDB, Query
 import undetected_chromedriver as uc
@@ -80,7 +79,7 @@ For scrap https://www.harrods.com/en-bd/ website's product URL, you have to inpu
 6. Boo oom :)
 '''
 from_page_number = 1  # From Page
-to_page_number = 50  # To Page
+to_page_number = 25  # To Page
 
 page_url = "https://www.harrods.com/en-bd/shopping/women-clothing-tops?icid=megamenu_shop_women_clothing_tops"
 
