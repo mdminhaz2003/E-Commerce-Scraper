@@ -16,3 +16,15 @@ url_db = TinyDB("harrods_product_url.json")
 urls = url_db.all()
 query = Query()
 
+'''
+Chrome Driver Functionally added here
+'''
+base_url = "https://www.harrods.com"
+chrome_options = uc.ChromeOptions()
+driver = uc.Chrome(
+    driver_executable_path="../chrome_driver/linux_64/chromedriver",    # input your driver path
+    options=chrome_options
+)
+driver.get(base_url)
+driver.implicitly_wait(time_to_wait=2)
+driver.switch_to.new_window(type_hint='tab')
