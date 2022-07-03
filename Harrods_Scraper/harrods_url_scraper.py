@@ -23,4 +23,6 @@ def product_url_scraper(page_link: str, serial_number: int) -> None:
         driver.get(page_link)
         driver.implicitly_wait(5)
 
-        html = BeautifulSoup(markup=driver.page_source, features='html.parser')
+        soup = BeautifulSoup(markup=driver.page_source, features='html.parser')
+        script_info = soup.find(name="script", attrs={'type': 'application/ld+json'})
+        page_data = json.loads(script_info.text.strip())
