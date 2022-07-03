@@ -9,7 +9,7 @@ query = Query()
 base_url = "https://www.harrods.com"
 chrome_options = uc.ChromeOptions()
 driver = uc.Chrome(
-    driver_executable_path="../chrome_driver/chromedriver",
+    driver_executable_path="../chrome_driver/linux_64/chromedriver",    # input your driver path
     options=chrome_options
 )
 driver.get(base_url)
@@ -84,9 +84,9 @@ to_page_number = 25  # To Page
 page_url = "https://www.harrods.com/en-bd/shopping/women-clothing-tops?icid=megamenu_shop_women_clothing_tops"
 
 for page_number in range(from_page_number, to_page_number + 1):
-    page_link = f"{page_url}&pageindex={page_number}"
+    main_link = f"{page_url}&pageindex={page_number}"
     try:
-        product_url_scraper(page_link=page_link, serial_number=page_number)
+        product_url_scraper(page_link=main_link, serial_number=page_number)
     except Exception as exception:
         print(exception)
 
