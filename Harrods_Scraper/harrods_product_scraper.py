@@ -1,5 +1,6 @@
 import re
 import json
+import time
 from bs4 import BeautifulSoup
 from tinydb import TinyDB, Query
 import undetected_chromedriver as uc
@@ -27,7 +28,7 @@ driver = uc.Chrome(
     options=chrome_options
 )
 driver.get(base_url)
-driver.implicitly_wait(time_to_wait=2)
+time.sleep(1)
 driver.switch_to.new_window(type_hint='tab')
 
 condition = re.compile(r"(window.__PRELOADED_STATE__ = )")
@@ -37,7 +38,7 @@ def product_scraper(product_url: str, serial_number: int) -> None:
     try:
         driver.switch_to.window(driver.window_handles[serial_number % 2])
         driver.get(product_url)
-        driver.implicitly_wait(2.5)
+        time.sleep(1.2)
 
         soup = BeautifulSoup(markup=driver.page_source, features='html.parser')  # make soup with full markup
         script_tags = soup.find_all(name='script')  # find all existing script tags
