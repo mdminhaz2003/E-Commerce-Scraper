@@ -1,39 +1,3 @@
-import re
-import json
-import time
-from bs4 import BeautifulSoup
-from tinydb import TinyDB, Query
-import undetected_chromedriver as uc
-from base_json_template import JsonTemplate
-
-'''
-1. create a new database file called as harrods_product_info.json for store product informations
-    if this file already exist, then file will not create.
-
-2. Read URL database file for get all products URLs
-3. create a query object for query database.
-'''
-db = TinyDB("harrods_product_info.json")
-url_db = TinyDB("harrods_product_url.json")
-urls = url_db.all()
-query = Query()
-
-'''
-Chrome Driver Functionally added here
-'''
-base_url = "https://www.harrods.com"
-chrome_options = uc.ChromeOptions()
-driver = uc.Chrome(
-    driver_executable_path="../chrome_driver/linux_64/chromedriver",  # input your driver path
-    options=chrome_options
-)
-driver.get(base_url)
-time.sleep(1)
-driver.switch_to.new_window(type_hint='tab')
-
-condition = re.compile(r"(window.__PRELOADED_STATE__ = )")
-
-
 def product_scraper(product_url: str, serial_number: int) -> None:
     try:
         driver.switch_to.window(driver.window_handles[serial_number % 2])
@@ -152,9 +116,45 @@ def product_scraper(product_url: str, serial_number: int) -> None:
         print(ex)
 
 
-for url_data in urls:
-    try:
-        print(url_data['url'])
-        product_scraper(url_data['url'], urls.index(url_data))
-    except Exception as e:
-        print(e)
+if __name__ == '__main__':
+    import re
+    import json
+    import time
+    from bs4 import BeautifulSoup
+    from tinydb import TinyDB, Query
+    import undetected_chromedriver as uc
+    from base_json_template import JsonTemplate
+
+    '''
+    1. create a new database file called as harrods_product_info.json for store product informations
+        if this file already exist, then file will not create.
+
+    2. Read URL database file for get all products URLs
+    3. create a query object for query database.
+    '''
+    db = TinyDB("harrods_product_info.json")
+    url_db = TinyDB("harrods_product_url.json")
+    urls = url_db.all()
+    query = Query()
+
+    '''
+    Chrome Driver Functionally added here
+    '''
+    base_url = "https://www.harrods.com"
+    chrome_options = uc.ChromeOptions()
+    driver = uc.Chrome(
+        driver_executable_path="../chrome_driver/linux_64/chromedriver",  # input your driver path
+        options=chrome_options
+    )
+    driver.get(base_url)
+    time.sleep(1)
+    driver.switch_to.new_window(type_hint='tab')
+
+    condition = re.compile(r"(window.__PRELOADED_STATE__ = )")
+
+    for url_data in urls:
+        try:
+            print(url_data['url'])
+            product_scraper(url_data['url'], urls.index(url_data))
+        except Exception as e:
+            print(e)
