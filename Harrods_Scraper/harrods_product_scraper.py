@@ -56,7 +56,6 @@ def product_scraper(product_url: str, serial_number: int) -> None:
                 price_text = str(value["price"]["includingTaxes"]).replace(",", "")
             except KeyError as out_of_stoke:
                 price_text = "Out of Stock"
-                print(out_of_stoke)
 
             for color in value["colors"]:
                 if color["tags"][0] == "MainColor":
