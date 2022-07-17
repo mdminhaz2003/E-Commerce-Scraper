@@ -84,7 +84,15 @@ def product_scraper(product_url: str, serial_number: int) -> None:
             for _ in available_colors:
                 sizes.append(size)
 
-        colors = available_colors * len(available_sizes)
+        if len(available_colors) != 0 and len(available_sizes) != 0:
+            colors = available_colors * len(available_sizes)
+        elif len(available_colors) == 0 and len(available_sizes) != 0:
+            colors = ['No Colour Available'] * len(available_sizes)
+        elif len(available_colors) != 0 and len(available_sizes) == 0:
+            colors = available_colors
+        else:
+            colors = ["No Colour Available"]
+
         price = [price_text for _ in colors]
         image_position = [str(number) for number in range(1, len(images_url) + 1)]
         variant_image = [images_url[0]]
