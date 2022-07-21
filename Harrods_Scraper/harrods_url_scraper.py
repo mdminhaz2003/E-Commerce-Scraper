@@ -6,42 +6,34 @@ def product_url_scraper(page_link: str, serial_number: int) -> None:
         time.sleep(2)
 
         soup = BeautifulSoup(markup=driver.page_source, features='html.parser')
-        script_info = soup.find(name="script", attrs={'type': 'application/ld+json'})
-        page_data = json.loads(script_info.text.strip())
+        script_tags = soup.find_all(name='script')  # find all existing script tags
 
-        '''
-        page data giving us a very big dictionary but we need only itemListElement part for get information about it.
-        page link : https://www.harrods.com/en-bd/shopping/women-clothing?icid=megamenu_shop_women_clothing_all-clothing
-        
-        "itemListElement":[
-            {
-                "@type":"ListItem",
-                "position":1,
-                "name":"Cotton-Blend Single-Breasted Blazer",
-                "url":"/en-bd/shopping/shopping/max-mara-cotton-blend-single-breasted-blazer-17662826"
-            },
-            ...
-        ]
-        '''
-        for product in page_data.get("itemListElement"):
-            '''
-            Making product url,
-            product_url = base url + itemListElement["url"]
-            product_url = https://www.harrods.com/en-bd/shopping/shopping/max-mara-cotton-blend-single-breasted-blazer-17662826
-            we got this link. But this link is totally invalid. if we visit this link we won't get our desired output from webpage.
-            because in this link have double (/shopping/shopping) part and we need to convert it to single (/shopping) then it will work perfectly.
-            So let's make it. :)
-            '''
-            product_url = f'{base_url}{str(product["url"]).replace("/shopping/shopping", "/shopping")}'
+        tags = list(filter(lambda script_tag: re.findall(condition, script_tag.text.strip()), script_tags))
+        products = None
+        for tag in tags:
+            products = json.loads(re.sub(condition, "", tag.text.strip()).strip()).get("entities")["products"]
 
+        for product in products.values():
+            product_url = f"https://www.harrods.com/en-bd/shopping/{product['slug']}"
+            product_id = product['id']
+            need_check = False
+            if product["groupedEntries"] is not None:
+                need_check = True
+            else:
+                pass
+
+            data = {
+                "product_id": product_id,
+                "product_url": product_url,
+                "need_check": need_check
+            }
             '''
             finally, we got our desired product url. Now we need to store this link to a safe place sa that we can use it in future. But we don't want to 
             store duplicate data to our database. That's why, we have to check that this url is already exist or not. 
             if this link is already exist, we have to pass otherwise we have to store in our database called as (harrods_product_url.json)
             '''
-            if not db.contains(query.url == product_url):
-                db.insert({"url": product_url})
-                print(product_url)
+            if not db.contains(query.product == data):
+                db.insert({"product": data})
             else:
                 pass
 
@@ -50,6 +42,7 @@ def product_url_scraper(page_link: str, serial_number: int) -> None:
 
 
 if __name__ == '__main__':
+    import re
     import json
     import time
     from tinydb import TinyDB, Query
@@ -68,6 +61,7 @@ if __name__ == '__main__':
     driver.get(base_url)
     time.sleep(2)
     driver.switch_to.new_window(type_hint='tab')
+    condition = re.compile(r"(window.__PRELOADED_STATE__ = )")
     '''
     For scrap https://www.harrods.com/en-bd/ website's product URL, you have to input a specific types of product page url.
     1. Visit this website : https://www.harrods.com/en-bd/
@@ -80,9 +74,9 @@ if __name__ == '__main__':
     6. Boo oom :)
     '''
     from_page_number = 1  # From Page
-    to_page_number = 25  # To Page
+    to_page_number = 1  # To Page
 
-    page_url = "https://www.harrods.com/en-bd/shopping/women-clothing-tops?icid=megamenu_shop_women_clothing_tops"
+    page_url = "https://www.harrods.com/en-ae/shopping/beauty?icid=megamenu_shop_beauty_beauty_view-all-beauty"
 
     for page_number in range(from_page_number, to_page_number + 1):
         main_link = f"{page_url}&pageindex={page_number}"

@@ -1,4 +1,4 @@
-def product_scraper(product_url: str, serial_number: int) -> None:
+def product_scraper(product_url: str, need_check: bool, serial_number: int) -> None:
     try:
         driver.switch_to.window(driver.window_handles[serial_number % 2])
         driver.get(product_url)
@@ -39,8 +39,8 @@ def product_scraper(product_url: str, serial_number: int) -> None:
         handle_text = ""
         title = ""
         for value in brands_values:
-            handle_text = value["slug"]
-            title = value["name"]
+            handle_text = f"\'{value['slug']}\'"
+            title = f"\'{value['name']}\'"
 
         price_text = ""
         custom_product_type = ""
@@ -50,21 +50,21 @@ def product_scraper(product_url: str, serial_number: int) -> None:
         images_url = []
         for value in products_values:
             custom_product_type = value["name"]
-            body_html = value["description"]
+            body_html = f'\'{value["description"]}\''
 
             try:
-                price_text = str(value["price"]["includingTaxes"]).replace(",", "")
-            except KeyError as out_of_stoke:
+                price_text = f'\'{str(value["price"]["includingTaxes"]).replace(",", "")}\''
+            except KeyError:
                 price_text = "Out of Stock"
+
+            for size in value["sizes"]:
+                available_sizes.append(f'\'{size["name"]}\'')
 
             for color in value["colors"]:
                 if color["tags"][0] == "MainColor":
-                    available_colors.append(color["color"]["name"])
+                    available_colors.append(f'\'{color["color"]["name"]}\'')
                 else:
                     pass
-
-            for size in value["sizes"]:
-                available_sizes.append(size["name"])
 
             for img_urls in value["images"]:
                 big_key = 0
@@ -82,6 +82,18 @@ def product_scraper(product_url: str, serial_number: int) -> None:
         for size in available_sizes:
             for _ in available_colors:
                 sizes.append(size)
+
+        if need_check:
+            available_colors = []
+            color_selector = driver.find_elements(by=By.ID, value='colorSwatch')
+            # options = color_selector.options
+            for option in color_selector:
+                option_value = option.find_elements(by=By.TAG_NAME, value='option')
+                for value in option_value[1:]:
+                    available_colors.append(f"\'{value.text}\'")
+                    print(value.text)
+        else:
+            pass
 
         if len(available_colors) != 0 and len(available_sizes) != 0:
             colors = available_colors * len(available_sizes)
@@ -114,9 +126,9 @@ def product_scraper(product_url: str, serial_number: int) -> None:
 
         if not db.contains(query.ID == str(product_url)):
             db.insert(my_data)
-            url_db.remove(query.url == product_url)
+            url_db.remove(query.product.product_url == product_url)
         else:
-            url_db.remove(query.url == product_url)
+            url_db.remove(query.product.product_url == product_url)
             pass
         print("complete")
     except Exception as ex:
@@ -127,6 +139,7 @@ if __name__ == '__main__':
     import re
     import json
     import time
+    from selenium.webdriver.common.by import By
     from bs4 import BeautifulSoup
     from tinydb import TinyDB, Query
     import undetected_chromedriver as uc
@@ -141,7 +154,7 @@ if __name__ == '__main__':
     '''
     db = TinyDB("harrods_product_info.json")
     url_db = TinyDB("harrods_product_url.json")
-    urls = url_db.all()
+    product_info = url_db.all()
     query = Query()
 
     '''
@@ -159,9 +172,13 @@ if __name__ == '__main__':
 
     condition = re.compile(r"(window.__PRELOADED_STATE__ = )")
 
-    for url_data in urls:
+    for product_data in product_info:
+        product_data_info = product_data["product"]
         try:
-            print(url_data['url'])
-            product_scraper(url_data['url'], urls.index(url_data))
+            product_scraper(
+                product_data_info['product_url'],
+                product_data_info['need_check'],
+                product_info.index(product_data)
+            )
         except Exception as e:
             print(e)
