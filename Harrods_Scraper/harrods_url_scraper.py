@@ -34,7 +34,9 @@ def product_url_scraper(page_link: str, serial_number: int) -> None:
             '''
             if not db.contains(query.product == data):
                 db.insert({"product": data})
+                print("Entered new value")
             else:
+                print("Ignored")
                 pass
 
     except Exception as unknown_exception:
@@ -76,9 +78,10 @@ if __name__ == '__main__':
     from_page_number = 1  # From Page
     to_page_number = 1  # To Page
 
-    page_url = "https://www.harrods.com/en-ae/shopping/beauty?icid=megamenu_shop_beauty_beauty_view-all-beauty"
+    page_url = "https://www.harrods.com/en-bd/shopping/beauty-make-up-lips?icid=megamenu_shop_beauty_make-up_lips"
 
     for page_number in range(from_page_number, to_page_number + 1):
+        print(page_number)
         main_link = f"{page_url}&pageindex={page_number}"
         try:
             product_url_scraper(page_link=main_link, serial_number=page_number)
