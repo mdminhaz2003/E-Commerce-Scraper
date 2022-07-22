@@ -63,7 +63,7 @@ def product_scraper(product_url: str, need_check: bool, serial_number: int) -> N
                     if size["name"] == "OS":
                         pass
                     else:
-                        product_size = f'{size["name"]}{size["scaleAbbreviation"]}'
+                        product_size = f'{size["name"]} {size["scaleAbbreviation"]}'
                         available_sizes.append(product_size)
 
                 for color in value["colors"]:

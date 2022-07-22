@@ -53,7 +53,8 @@ def product_scraper(urls: list, product_id: str) -> None:
                     if size["name"] == "OS":
                         pass
                     else:
-                        available_sizes.append(f'{size["name"]}')
+                        product_size = f'{size["name"]} {size["scaleAbbreviation"]}'
+                        available_sizes.append(product_size)
 
                 for color in value["colors"]:
                     if color["tags"][0] != "MainColor":
