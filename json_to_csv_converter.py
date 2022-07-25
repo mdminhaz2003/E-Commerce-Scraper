@@ -75,9 +75,15 @@ try:
             single_line_text = ""
             for line in single_row_data_list:
                 for word in line:
-                    new_word = re.sub(condition, '\'', word)
-                    single_line_text += f"{new_word},"
-                single_line_text += "\n"
+                    if len(word) > 0:
+                        if word[0] == "\"" and word[-1] == "\"":
+                            new_word = re.sub(condition, '\'', word[1:-1])
+                        else:
+                            new_word = word
+                    else:
+                        new_word = word
+                    single_line_text += f'\"{new_word}\",'
+                single_line_text += '\n'
             file.write(single_line_text)
 
         file.close()
