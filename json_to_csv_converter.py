@@ -1,7 +1,9 @@
 from tinydb import TinyDB
+import re
 
 
 database_name = input("Enter your Product Info database name : ")
+condition = re.compile(r'\"')
 try:
     database = TinyDB(database_name)
     database_data = database.all()
@@ -73,7 +75,8 @@ try:
             single_line_text = ""
             for line in single_row_data_list:
                 for word in line:
-                    single_line_text += f"{word},"
+                    new_word = re.sub(condition, '\'', word)
+                    single_line_text += f"{new_word},"
                 single_line_text += "\n"
             file.write(single_line_text)
 
