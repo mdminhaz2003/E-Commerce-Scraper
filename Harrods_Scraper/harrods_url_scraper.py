@@ -14,7 +14,7 @@ def product_url_scraper(page_link: str, serial_number: int) -> None:
             products = json.loads(re.sub(condition, "", tag.text.strip()).strip()).get("entities")["products"]
 
         for product in products.values():
-            product_url = f"https://www.harrods.com/en-bd/shopping/{product['slug']}"
+            product_url = f"https://www.harrods.com/en-ae/shopping/{product['slug']}"
             product_id = product['id']
             need_check = False
             if product["groupedEntries"] is not None:
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     db = TinyDB("harrods_product_url.json")
     query = Query()
 
-    base_url = "https://www.harrods.com"
+    base_url = "https://www.harrods.com/en-ae/"
     chrome_options = uc.ChromeOptions()
     driver = uc.Chrome(
         driver_executable_path="../chrome_driver/linux_64/chromedriver",    # input your driver path
@@ -65,20 +65,20 @@ if __name__ == '__main__':
     driver.switch_to.new_window(type_hint='tab')
     condition = re.compile(r"(window.__PRELOADED_STATE__ = )")
     '''
-    For scrap https://www.harrods.com/en-bd/ website's product URL, you have to input a specific types of product page url.
-    1. Visit this website : https://www.harrods.com/en-bd/
+    For scrap https://www.harrods.com/en-ae/ website's product URL, you have to input a specific types of product page url.
+    1. Visit this website : https://www.harrods.com/en-ae/
     2. Hover on specific types of product categories (Let's say Women)
     3. Click on specific types of product (Let's say Tops)
     4. Copy the url from URL bar.
-       You will get this: https://www.harrods.com/en-bd/shopping/women-clothing-tops?icid=megamenu_shop_women_clothing_tops
+       You will get this: https://www.harrods.com/en-ae/shopping/women-clothing-tops?icid=megamenu_shop_women_clothing_tops
        Remember, you URL must be like this. Otherwise it will not work.
     5. Paste to page_url variable.
     6. Boo oom :)
     '''
     from_page_number = 1  # From Page
-    to_page_number = 1  # To Page
+    to_page_number = 154  # To Page
 
-    page_url = "https://www.harrods.com/en-bd/shopping/beauty-make-up-lips?icid=megamenu_shop_beauty_make-up_lips"
+    page_url = "https://www.harrods.com/en-ae/shopping/beauty?icid=megamenu_shop_beauty_beauty_view-all-beauty"
 
     for page_number in range(from_page_number, to_page_number + 1):
         print(page_number)

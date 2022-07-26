@@ -45,7 +45,12 @@ class JsonTemplate:
     def list_equal(self) -> None:
         max_value = max(len(self.colors), len(self.sizes), len(self.image_src))
         if max_value == len(self.colors) == len(self.sizes) == len(self.image_src) == len(self.variant_image):
-            pass
+            value_adder(max_value=max_value, data_set=self.handle, value=self.handle_text)
+            value_adder(max_value=max_value, data_set=self.variant_inventory_policy, value="deny")
+            value_adder(max_value=max_value, data_set=self.variant_fulfilment_service, value="manual")
+            value_adder(max_value=max_value, data_set=self.variant_require_shipping, value="TRUE")
+            value_adder(max_value=max_value, data_set=self.variant_taxable, value="TRUE")
+            value_adder(max_value=max_value, data_set=self.variant_weight_unit, value="g")
         else:
             value_adder(max_value=max_value, data_set=self.colors, value="")
             value_adder(max_value=max_value, data_set=self.sizes, value="")
