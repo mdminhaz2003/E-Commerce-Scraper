@@ -1,18 +1,18 @@
 def product_scraper(urls: list, product_id: str) -> None:
-    handle_text = ""
-    title = ""
-    custom_product_type = ""
-    price_text = ""
-    body_html = ""
-    available_sizes = []
-    available_colors = []
-    images_url = []
-    tags = ""
-    sizes = []
-    variant_image = []
+    try:
+        handle_text = ""
+        title = ""
+        custom_product_type = ""
+        price_text = ""
+        body_html = ""
+        available_sizes = []
+        available_colors = []
+        images_url = []
+        tags = ""
+        sizes = []
+        variant_image = []
 
-    for url in urls:
-        try:
+        for url in urls:
             driver.switch_to.window(driver.window_handles[urls.index(url) % 2])
             driver.get(url)
             time.sleep(1.2)
@@ -75,47 +75,47 @@ def product_scraper(urls: list, product_id: str) -> None:
                     else:
                         pass
             print(f"Checked {url}")
-        except Exception as ex:
-            print(ex)
 
-    for size in available_sizes:
-        for _ in available_colors:
-            sizes.append(size)
+        for size in available_sizes:
+            for _ in available_colors:
+                sizes.append(size)
 
-    if len(available_colors) != 0 and len(available_sizes) != 0:
-        colors = available_colors * len(available_sizes)
-    elif len(available_colors) == 0 and len(available_sizes) != 0:
-        colors = ['No Color'] * len(available_sizes)
-    elif len(available_colors) != 0 and len(available_sizes) == 0:
-        colors = available_colors
-    else:
-        colors = ["No Color"]
+        if len(available_colors) != 0 and len(available_sizes) != 0:
+            colors = available_colors * len(available_sizes)
+        elif len(available_colors) == 0 and len(available_sizes) != 0:
+            colors = ['No Color'] * len(available_sizes)
+        elif len(available_colors) != 0 and len(available_sizes) == 0:
+            colors = available_colors
+        else:
+            colors = ["No Color"]
 
-    price = [price_text for _ in colors]
-    image_position = [str(number) for number in range(1, len(images_url) + 1)]
-    json_template = JsonTemplate(
-        handle_text=handle_text,
-        title=title,
-        body_html=body_html,
-        custom_product_type=custom_product_type,
-        tags=tags,
-        product_id=urls[0],
-        colors=colors,
-        sizes=sizes,
-        price=price,
-        image_src=images_url,
-        image_position=image_position,
-        variant_image=variant_image
-    )
+        price = [price_text for _ in colors]
+        image_position = [str(number) for number in range(1, len(images_url) + 1)]
+        json_template = JsonTemplate(
+            handle_text=handle_text,
+            title=title,
+            body_html=body_html,
+            custom_product_type=custom_product_type,
+            tags=tags,
+            product_id=urls[0],
+            colors=colors,
+            sizes=sizes,
+            price=price,
+            image_src=images_url,
+            image_position=image_position,
+            variant_image=variant_image
+        )
 
-    my_data = json_template.main_dict()
+        my_data = json_template.main_dict()
 
-    if not db.contains(query.ID == str(urls[0])):
-        db.insert(my_data)
-        special_product_db.remove(query.id == product_id)
-    else:
-        special_product_db.remove(query.id == product_id)
-    print("complete")
+        if not db.contains(query.ID == str(urls[0])):
+            db.insert(my_data)
+            special_product_db.remove(query.id == product_id)
+        else:
+            special_product_db.remove(query.id == product_id)
+        print("complete")
+    except Exception as exception:
+        print(exception, urls)
 
 
 if __name__ == '__main__':
